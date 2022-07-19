@@ -7,33 +7,45 @@ library(rvest)
 
 # read in http://www.imdb.com/chart/tvmeter ------------------------------------
 
-page <- read_html("___")
+page <- read_html("http://www.imdb.com/chart/tvmeter")
 
 # years ------------------------------------------------------------------------
 
 years <- page %>%
-  html_nodes("___") %>%
-  html_text() %>%
-  ___
+  html_nodes("a+ .secondaryInfo") %>%
+  html_text() %>% 
+  str_remove("\\)") %>% 
+  str_remove("\\(") %>% 
+  as.numeric()
 
 # scores -----------------------------------------------------------------------
 
 scores <- page %>%
-  ___
+  html_nodes(".imdbRating") %>%
+  html_text() %>% 
+  as.numeric()
+
 
 # names ------------------------------------------------------------------------
 
-names <- ___
-
+names <- page %>%
+  html_nodes(".titleColumn a") %>%
+  html_text()
+  
 # tvshows dataframe ------------------------------------------------------------
 
 tvshows <- tibble(
   rank = 1:100,
-  ___,
-  ___,
-  ___,
-  ___
+  title = names,
+  year = years,
+  score = scores
 )
+
+# seperate out stuff (didnt have to do this but good to know for future reference)
+
+#tvshows %>% 
+#seperate(col = title, into c("title", "other_info"), sep = "" \\(", extra = "merge") %>% 
+#select
 
 # add new variables ------------------------------------------------------------
 
@@ -46,8 +58,8 @@ tvshows <- tvshows %>%
 
 # add new info for first show --------------------------------------------------
 
-tvshows$genre[1] <- "__"
-tvshows$runtime[1] <- ___
+tvshows$genre[1] <- "Drama, Fantasy, Horror, MysterySci-Fi, Thriller"
+tvshows$runtime[1] <- "51"
 tvshows$n_episode[1] <- ___
 
 # add new info for second show --------------------------------------------------
